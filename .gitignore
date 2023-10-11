@@ -2,7 +2,7 @@
 .venv
 utils/__pycache__
 .old
-*.txt
 *.csv
 *.json
 .DS_Store
+report
