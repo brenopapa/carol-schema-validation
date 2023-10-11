@@ -42,11 +42,11 @@ def carol_compare(default, target):
                                      , columns=["table_name","default_pk","target_pk"]
                                      )
             result = pd.concat([result, divergence], ignore_index=True)
-    return result
+    return result.reset_index(drop=True)
 
 def bigquery_compare(default, target):
     merged = pd.merge(default, target, on=["table_name", "column_name"], how="left", indicator=True)
     missing_fields = merged.query('_merge=="left_only"')
     missing_fields.drop("_merge", axis=1, inplace=True)
     missing_fields["event_date"] = pd.Timestamp.now()
-    return missing_fields
+    return missing_fields.reset_index(drop=True)
