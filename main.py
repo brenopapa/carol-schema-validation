@@ -15,11 +15,11 @@ def run():
     
     print(schema.bigquery_compare(default_bq_schema, target_bq_schema))
 
-    # default_carol_schema = schema.carol_schema(default)
-    # target_carol_schema = schema.carol_schema(target)
+    #CAROL COMPARISON
+    default_carol_schema = schema.carol_schema(default, args.get("connector"))
+    target_carol_schema = schema.carol_schema(target, args.get("connector"))
 
-
-    # print(schema.bigquery_compare(default_bq_schema, target_bq_schema))
+    print(schema.carol_compare(default_carol_schema, target_carol_schema))
 
 if __name__ == "__main__":
     run()
