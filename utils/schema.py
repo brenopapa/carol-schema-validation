@@ -21,13 +21,13 @@ def carol_compare(default, target):
 
     return merged
  
-def bigquery_schema(carol, connector=None):
+def bigquery_schema(carol, connector):
     schema = BQ(carol).query(
         f''' SELECT 
                 table_name, column_name
             FROM INFORMATION_SCHEMA.COLUMNS 
             WHERE 1=1
-            AND table_name like 'ingestion_stg%'
+            AND table_name like 'ingestion_stg_{connector}%'
             AND column_name not like 'mdm%'
             AND column_name not like '_ingestionDatetime'
         ''')

@@ -17,6 +17,7 @@ PARSER.add_argument(
 PARSER.add_argument(
     "-c", 
     "--connector", 
-    type=str, 
+    type=str,
+    default='',
     help="Filter connector to check schema",
 )
