@@ -2,11 +2,17 @@ import pandas as pd
 from pycarol import BQ
 
 pd.set_option('display.max_columns', None) 
+pd.set_option('display.max_rows', None)
 pd.set_option('display.width', None) 
 pd.set_option('display.max_colwidth', None)
 
 def carol_schema(carol, connector):
     schema = carol.call_api(f'v3/staging?pageSize=-1', 'GET')['hits']
+    if connector != '':
+        connector = carol.call_api(f'v3/connectors/name/{connector}', 'GET')['mdmId']
+        for staging in schema:
+            if staging['mdmConnectorId'] != connector:
+                del schema[schema.index(staging)]
     return schema
  
 def bigquery_schema(carol, connector):
