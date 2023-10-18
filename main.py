@@ -5,6 +5,8 @@ from cloudevents.http.event import CloudEvent
 import utils.carol_auth as carol_auth
 import utils.schema as schema
 
+#TODO -> use token and go to data-engs
+
 # args = vars(PARSER.parse_args())
 
 @functions_framework.cloud_event
@@ -40,6 +42,13 @@ def run(cloud_event: CloudEvent) -> None:
     try:
         print(f"Divergent PKs (crosswalks): \n")
         print(schema.carol_compare(default_carol_schema, target_carol_schema))
+    except Exception as e:
+        raise(e)
+    
+    # PK COMPARISON
+    try:
+        print(f"Tables with more than one instance of mdmId for each pk: \n")
+        print(schema.pk_mdmId_lookup(target, target_carol_schema, cloud_event.data['connector']))
     except Exception as e:
         raise(e)
 if __name__ == "__main__":

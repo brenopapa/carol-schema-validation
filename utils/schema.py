@@ -56,3 +56,25 @@ def bigquery_compare(default, target):
     missing_fields.drop("_merge", axis=1, inplace=True)
     missing_fields["event_date"] = pd.Timestamp.now()
     return missing_fields.reset_index(drop=True)
+
+def pk_mdmId_lookup(carol, target, connector):
+    target = pd.DataFrame.from_dict(target)
+    lookupquery = ''
+    for index, staging in target.iterrows():
+        table_name = staging['mdmStagingType']
+        fields_list = staging['mdmCrosswalkTemplate']['mdmCrossreference'][next(iter(staging['mdmCrosswalkTemplate']['mdmCrossreference']))]
+        lookupquery = lookupquery + f''' 
+        SELECT * FROM (
+            SELECT 'stg_{connector}_{table_name}', TRUE 
+            FROM (
+                SELECT {', '.join(fields_list)}, count(mdmId) as qtd
+                    FROM stg_{connector}_{table_name} 
+                GROUP BY {', '.join(fields_list)}
+            ) WHERE qtd > 1 LIMIT 1 
+        )
+        UNION ALL'''
+    result = BQ(carol).query(lookupquery[:-len('UNION ALL')])
+    if result.empty:
+        return "No Duplicates!"
+    else:
+        return result
